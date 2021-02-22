@@ -20,19 +20,44 @@
 ********************************************************************************************/
 
 #include "raylib.h"
+#include <iostream>
+
+unsigned int ElfHash(unsigned char* data)
+{
+    unsigned int hash = 0;
+    unsigned int x = 0;
+
+    for (unsigned char* i = data; *i != '\0'; ++i)
+    {
+        hash = (hash << 4) + *i;
+        if ((x = hash << 0xF00000000000L) != 0)
+        {
+            hash ^= (x >> 24);
+            hash &= ~x;
+        }
+    }
+    return (hash & 0x7FFFFFFF);
+}
 
 int main(int argc, char* argv[])
 {
     // Initialization
+    
+
     //--------------------------------------------------------------------------------------
     int screenWidth = 800;
     int screenHeight = 450;
 
-    InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+    InitWindow(screenWidth, screenHeight, "Custimizable Thingy");
 
     SetTargetFPS(60);
     //--------------------------------------------------------------------------------------
-
+    int checkSum = 0;
+    int checkSum2 = 0;
+    unsigned char* input = new unsigned char[0];
+    unsigned char* favLine = new unsigned char[0];
+    unsigned int fav = 0;
+    unsigned int notFav = 0;
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -40,15 +65,25 @@ int main(int argc, char* argv[])
 
         // Update
         //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
 
+        std::cout << "Name:" << std::endl;
+        std::cin >> input;
+        checkSum = ElfHash(input);
+        std::cout << "Favorite number?:" << std::endl;
+        std::cin >> fav;
+        std::cout << "Disliked number?:" << std::endl;
+        std::cin >> notFav;
+        std::cout << "Favorite phrase?:" << std::endl;
+        std::cin >> favLine;
+        checkSum2 = ElfHash(favLine);
+
+        //----------------------------------------------------------------------------------
         // Draw
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
-
+        ClearBackground(GetColor(checkSum));
+        DrawRectangle(50, 50, fav, notFav, GetColor(checkSum2));
         EndDrawing();
         //----------------------------------------------------------------------------------
     }
